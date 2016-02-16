@@ -13,11 +13,18 @@ module.exports = function(app, passport) {
     // show the login form
     app.get('/login', function(req, res) {
         // render the page and pass in any flash data if it exists
-        res.render('login', { message: req.flash('loginMessage') }); 
+        if (!req.isAuthenticated())
+        	res.render('login', { message: req.flash('loginMessage') }); 
+    	res.redirect('/profile'); 
+
     });
 
     // process the login form
-    // app.post('/login', do all our passport stuff here);
+    app.post('/login', passport.authenticate('local-login', {
+    	successRedirect : '/profile',
+    	failureRedirect : '/login',
+    	failureFlash : true
+    }));
 
     // =====================================
     // SIGNUP ==============================
@@ -58,7 +65,6 @@ module.exports = function(app, passport) {
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
-
     // if user is authenticated in the session, carry on 
     if (req.isAuthenticated())
         return next();

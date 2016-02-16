@@ -15,6 +15,7 @@ var session = require('express-session');
 var flash = require('connect-flash');
 
 
+require('./passport/passport')(passport); // pass passport for configuration
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,17 +29,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', routes);
-//app.use('/users', users);
-
 
 // required for passport
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch', cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }));
+app.use(session({ secret: 'ilovescotchscotchyscotchscotch', resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
-
-require('./passport/passport')(passport); // pass passport for configuration
 
 //--------------------------------------------------------------------------------------------------------
 //Routes--------------------------------------------------------------------------------------------------
