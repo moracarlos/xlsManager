@@ -34,7 +34,9 @@ module.exports = function(passport) {
 
     passport.use('local-signup', new LocalStrategy(
         {
-            passReqToCallback: true
+            usernameField : 'email',
+            passwordField : 'password',
+            passReqToCallback : true
         },
         function(req, email, password, done) {
         // asynchronous
@@ -78,6 +80,8 @@ module.exports = function(passport) {
     //Log in -----------------------------------------------------------------------------------------
     passport.use('local-login', new LocalStrategy(
         {
+            usernameField : 'email',
+            passwordField : 'password',
             passReqToCallback : true
         },
         function(req, email, password, done){
