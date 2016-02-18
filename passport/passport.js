@@ -32,7 +32,11 @@ module.exports = function(passport) {
     // we are using named strategies since we have one for login and one for signup
     // by default, if there was no name, it would just be called 'local'
 
-    passport.use('local-signup', new LocalStrategy(function(email, password, done) {
+    passport.use('local-signup', new LocalStrategy(
+        {
+            passReqToCallback: true
+        },
+        function(req, email, password, done) {
         // asynchronous
         // User.findOne wont fire unless data is sent back
         process.nextTick(function() {
@@ -47,7 +51,7 @@ module.exports = function(passport) {
 
                 // check to see if theres already a user with that email
                 if (user) {
-                    return done(null, false, { message: 'Already used.' });
+                    return done(null, false, { message: req.flash('signupMessage', 'Already used') });
                 } else {
                     // if there is no user with that email
                     // create the user
@@ -72,14 +76,18 @@ module.exports = function(passport) {
     }));
 
     //Log in -----------------------------------------------------------------------------------------
-    passport.use('local-login', new LocalStrategy(function(email, password, done){
+    passport.use('local-login', new LocalStrategy(
+        {
+            passReqToCallback : true
+        },
+        function(req, email, password, done){
         User.findOne({email:email}, function(err, user){
             if (err) {return done(err);}
             if (!user){
-                return done(null, false, {message: 'Incorrect username.'});
+                return done(null, false, req.flash('loginMessage', 'The username and password you entered did not match our records'));
             }
             if (!user.validPassword(password)){
-                return done(null, false, {message : 'Incorrect password.'});
+                return done(null, false, req.flash('loginMessage', 'The username and password you entered did not match our records'));
             }
             return done(null, user);
         });
